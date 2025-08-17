@@ -17,7 +17,7 @@ export default function Home() {
             Welcome to Our Wedding Celebration
           </h1>
           <p className="mt-6 text-lg leading-8 text-gray-600">
-            We can't wait to share our special day with you.
+            We can&apos;t wait to share our special day with you.
           </p>
         </div>
 

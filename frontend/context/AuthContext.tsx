@@ -1,13 +1,11 @@
 'use client';
 
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import api from '@/lib/api';
 import { AuthUser } from '@/lib/types';
-import { jwtDecode } from 'jwt-decode';
 
 interface AuthContextType {
   user: AuthUser | null;
-  login: (token: string) => void;
+  login: (email: string, password: string) => void;
   logout: () => void;
   loading: boolean;
 }
@@ -19,31 +17,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const decoded: { sub: string; roles: string[] } = jwtDecode(token);
-        setUser({ email: decoded.sub, role: decoded.roles.includes('ROLE_ADMIN') ? 'ADMIN' : 'USER' });
-      } catch (error) {
-        console.error('Invalid token');
-        localStorage.removeItem('token');
-      }
+    const email = localStorage.getItem('email');
+    const auth = localStorage.getItem('auth');
+    if (email && auth) {
+      setUser({ email, role: 'USER' });
     }
     setLoading(false);
   }, []);
 
-  const login = (token: string) => {
-    localStorage.setItem('token', token);
-    try {
-      const decoded: { sub: string; roles: string[] } = jwtDecode(token);
-      setUser({ email: decoded.sub, role: decoded.roles.includes('ROLE_ADMIN') ? 'ADMIN' : 'USER' });
-    } catch (error) {
-      console.error('Invalid token on login');
-    }
+  const login = (email: string, password: string) => {
+    const auth = btoa(`${email}:${password}`);
+    localStorage.setItem('auth', auth);
+    localStorage.setItem('email', email);
+    setUser({ email, role: 'USER' });
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('auth');
+    localStorage.removeItem('email');
     setUser(null);
   };
 
