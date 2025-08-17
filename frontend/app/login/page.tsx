@@ -18,8 +18,8 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
     try {
-      const response = await api.post('/auth/login', { email, password });
-      login(response.data.token);
+      await api.post('/auth/login', { email, password });
+      login(email, password);
       router.push('/events'); // Redirect to a protected page
     } catch (err) {
       setError('Failed to login. Please check your credentials.');
